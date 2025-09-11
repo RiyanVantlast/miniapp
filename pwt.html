@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Product of the Week (PTW)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card-header {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: bold;
+        }
+        .table thead th {
+            background-color: #e9ecef;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .table th, .table td {
+            padding: 8px;
+            font-size: 14px;
+        }
+        .day-column {
+            width: 80px;
+        }
+        .percentage-badge {
+            font-size: 11px;
+            background-color: #6c757d;
+        }
+        .form-control-sm {
+            height: calc(1.5em + 0.5rem + 2px);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        .target-day-row {
+            font-size: 12px;
+            color: #6c757d;
+            font-weight: bold;
+        }
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h5 class="m-0">MONITORING PRODUCT OF THE WEEK (PTW)</h5>
+            </div>
+            <div class="card-body">
+                <form id="ptwForm">
+                    <!-- Header Form -->
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label">TOKO</label>
+                            <select class="form-select" required>
+                                <option value="" selected disabled>Pilih Toko</option>
+                                <option value="toko1">Toko 1</option>
+                                <option value="toko2">Toko 2</option>
+                                <option value="toko3">Toko 3</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label">PERIODE AREA</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label">BUAT DENGAN TANGGAL</label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                        <div class="col-md-3 mb-2 d-flex align-items-end">
+                            <button type="button" class="btn btn-success me-2" id="addRowBtn">
+                                <i class="bi bi-plus-circle"></i> Tambah Baris
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Simpan
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="productTable">
+                            <thead class="sticky-header">
+                                <tr>
+                                    <th rowspan="3" class="text-center">No</th>
+                                    <th rowspan="3" class="text-center">PLU</th>
+                                    <th rowspan="3" class="text-center">Description</th>
+                                    <th rowspan="3" class="text-center">Saldo</th>
+                                    <th rowspan="3" class="text-center">Target</th>
+                                    <th rowspan="3" class="text-center">Sales % vs Target</th>
+                                    <th colspan="7" class="text-center">Hari</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center day-column">Kamis <span class="badge percentage-badge">30%</span></th>
+                                    <th class="text-center day-column">Jumat <span class="badge percentage-badge">20%</span></th>
+                                    <th class="text-center day-column">Sabtu <span class="badge percentage-badge">15%</span></th>
+                                    <th class="text-center day-column">Minggu <span class="badge percentage-badge">20%</span></th>
+                                    <th class="text-center day-column">Senin <span class="badge percentage-badge">15%</span></th>
+                                    <th class="text-center day-column">Selasa <span class="badge percentage-badge">15%</span></th>
+                                    <th class="text-center day-column">Rabu</th>
+                                </tr>
+                                <tr class="target-day-row">
+                                    <td class="text-center">Target / Day</td>
+                                    <td class="text-center">Target / Day</td>
+                                    <td class="text-center">Target / Day</td>
+                                    <td class="text-center">Target / Day</td>
+                                    <td class="text-center">Target / Day</td>
+                                    <td class="text-center">Target / Day</td>
+                                    <td class="text-center">Target / Day</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-center">1</td>
+                                    <td><input type="text" class="form-control form-control-sm" name="plu[]"></td>
+                                    <td><input type="text" class="form-control form-control-sm" name="description[]"></td>
+                                    <td><input type="number" class="form-control form-control-sm" name="saldo[]" min="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm target-input" name="target[]" min="0"></td>
+                                    <td class="text-center">0%</td>
+                                    <td><input type="number" class="form-control form-control-sm day-input" data-day="kamis" data-percent="30" name="kamis[]" min="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm day-input" data-day="jumat" data-percent="20" name="jumat[]" min="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm day-input" data-day="sabtu" data-percent="15" name="sabtu[]" min="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm day-input" data-day="minggu" data-percent="20" name="minggu[]" min="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm day-input" data-day="senin" data-percent="15" name="senin[]" min="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm day-input" data-day="selasa" data-percent="15" name="selasa[]" min="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm day-input" data-day="rabu" data-percent="0" name="rabu[]" min="0"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add new row functionality
+            document.getElementById('addRowBtn').addEventListener('click', function() {
+                const tbody = document.querySelector('#productTable tbody');
+                const rowCount = tbody.querySelectorAll('tr').length;
+                const newRow = document.createElement('tr');
+                
+                newRow.innerHTML = `
+                    <td class="text-center">${rowCount + 1}</td>
+                    <td><input type="text" class="form-control form-control-sm" name="plu[]"></td>
+                    <td><input type="text" class="form-control form-control-sm" name="description[]"></td>
+                    <td><input type="number" class="form-control form-control-sm" name="saldo[]" min="0"></td>
+                    <td><input type="number" class="form-control form-control-sm target-input" name="target[]" min="0"></td>
+                    <td class="text-center">0%</td>
+                    <td><input type="number" class="form-control form-control-sm day-input" data-day="kamis" data-percent="30" name="kamis[]" min="0"></td>
+                    <td><input type="number" class="form-control form-control-sm day-input" data-day="jumat" data-percent="20" name="jumat[]" min="0"></td>
+                    <td><input type="number" class="form-control form-control-sm day-input" data-day="sabtu" data-percent="15" name="sabtu[]" min="0"></td>
+                    <td><input type="number" class="form-control form-control-sm day-input" data-day="minggu" data-percent="20" name="minggu[]" min="0"></td>
+                    <td><input type="number" class="form-control form-control-sm day-input" data-day="senin" data-percent="15" name="senin[]" min="0"></td>
+                    <td><input type="number" class="form-control form-control-sm day-input" data-day="selasa" data-percent="15" name="selasa[]" min="0"></td>
+                    <td><input type="number" class="form-control form-control-sm day-input" data-day="rabu" data-percent="0" name="rabu[]" min="0"></td>
+                `;
+                
+                tbody.appendChild(newRow);
+                attachEventListenersToRow(newRow);
+            });
+
+            // Attach event listeners to existing row
+            document.querySelectorAll('#productTable tbody tr').forEach(row => {
+                attachEventListenersToRow(row);
+            });
+
+            // Form submission
+            document.getElementById('ptwForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Data berhasil disimpan!');
+                // Here you would typically send the data to a server
+            });
+
+            function attachEventListenersToRow(row) {
+                // Calculate sales percentage when target or day inputs change
+                const targetInput = row.querySelector('.target-input');
+                const dayInputs = row.querySelectorAll('.day-input');
+                const percentageCell = row.querySelector('td:nth-child(6)');
+                
+                const calculatePercentage = () => {
+                    const targetValue = parseFloat(targetInput.value) || 0;
+                    let totalSales = 0;
+                    
+                    dayInputs.forEach(input => {
+                        totalSales += parseFloat(input.value) || 0;
+                    });
+                    
+                    if (targetValue > 0) {
+                        const percentage = (totalSales / targetValue) * 100;
+                        percentageCell.textContent = percentage.toFixed(2) + '%';
+                        
+                        // Color coding for percentage
+                        if (percentage >= 100) {
+                            percentageCell.style.color = 'green';
+                            percentageCell.style.fontWeight = 'bold';
+                        } else if (percentage >= 80) {
+                            percentageCell.style.color = 'orange';
+                        } else {
+                            percentageCell.style.color = 'red';
+                        }
+                    } else {
+                        percentageCell.textContent = '0%';
+                        percentageCell.style.color = '';
+                    }
+                };
+                
+                targetInput.addEventListener('input', calculatePercentage);
+                dayInputs.forEach(input => {
+                    input.addEventListener('input', calculatePercentage);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
