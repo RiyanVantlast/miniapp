@@ -95,17 +95,15 @@
 <body class="h-full">
 
 <div class="min-h-full flex flex-col">
-    <!-- Navbar (tanpa base64, placeholder) -->
+    <!-- Navbar (dengan ID pada gambar) -->
     <nav class="bg-white border-b border-gray-200 py-2 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
-                <!-- Logo Lincgrp placeholder -->
-                <img src=" alt="Lincgrp" class="h-12 w-auto">
+                <img id="lincgrpLogo" src="" alt="Lincgrp" class="h-12 w-auto">
                 <span class="text-sm font-bold text-gray-900"> JABABEKA <span class="text-indigo-600">WH</span></span>
             </div>
             <div class="flex gap-2 items-center">
-                <!-- Logo Linclog placeholder -->
-                <img src="" alt="Linclog" class="h-12 w-auto">
+                <img id="linclogLogo" src="" alt="Linclog" class="h-12 w-auto">
                 <button id="processBtn" class="inline-flex items-center px-4 py-2 text-xs font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-all active:scale-95 shadow-md">
                     <span id="btnText">CREATED COUNTSHEET</span>
                     <span class="spinner ml-2" id="loadingSpinner" style="display: none;"></span>
@@ -176,7 +174,7 @@
                 <table id="resultTable" class="min-w-full divide-y divide-gray-200">
                     <thead id="tableHeader" class="bg-gray-50 sticky top-0 z-10"></thead>
                     <tbody id="tableBody" class="bg-white divide-y divide-gray-50"></tbody>
-                </table>
+                 </table>
                 <div id="emptyMsg" class="py-16 text-center">
                     <p class="text-[11px] font-bold text-gray-300 uppercase tracking-[0.2em]">Menunggu Unggahan & Proses</p>
                 </div>
@@ -215,20 +213,13 @@
         loader: document.getElementById('loadingSpinner'),
         btnText: document.getElementById('btnText')
     };
-(async function initLogos() {
-    lincgrpLogoBase64 = await loadLogoFromFile('lincgrp_logo.txt');
-    linclogLogoBase64 = await loadLogoFromFile('linclog_logo.txt');
 
-    // Set src navbar images
-    const lincgrpImg = document.getElementById('lincgrpLogo');
-    const linclogImg = document.getElementById('linclogLogo');
-    if (lincgrpImg && lincgrpLogoBase64) lincgrpImg.src = lincgrpLogoBase64;
-    if (linclogImg && linclogLogoBase64) linclogImg.src = linclogLogoBase64;
-})();
     // ==================== VARIABEL GLOBAL ====================
     let currentResultRows = [];
     let currentCustomer = 'MAP';
     let currentMethod = 'location'; // 'location' atau 'transaction'
+    let lincgrpLogoBase64 = '';   // untuk menyimpan base64 logo Lincgrp
+    let linclogLogoBase64 = '';   // untuk menyimpan base64 logo Linclog
 
     // Fungsi untuk memfilter array berdasarkan customer, hanya jika customer bukan OCCUPANCY
     function filterByCustomer(arr, customer) {
@@ -494,12 +485,12 @@
                         rawData = rawData.filter(item => String(item['Customer ID'] || '').trim() === currentCustomer);
                     }
                 }
-					
-				// Abaikan baris jika Trace ID mengandung karakter "*"
-					rawData = rawData.filter(item => {
-				    const trace = String(item['Trace ID'] || '').trim();
- 						return !trace.includes('*'); // true jika tidak mengandung '*'
-					});
+                    
+                // Abaikan baris jika Trace ID mengandung karakter "*"
+                rawData = rawData.filter(item => {
+                    const trace = String(item['Trace ID'] || '').trim();
+                    return !trace.includes('*'); // true jika tidak mengandung '*'
+                });
 
                 // Filter Row, Level, SKU, Exp (sama seperti sebelumnya)
                 const rowFilter = parseFilterInput(dom.rowFilter.value);
@@ -586,15 +577,15 @@
                     doc1 = filterByCustomer(doc1, currentCustomer);
                     doc2 = filterByCustomer(doc2, currentCustomer);
                 }
-				// ===== TAMBAHAN FILTER TRACE ID UNTUK KEDUA FILE =====
-					doc1 = doc1.filter(item => {
-    				const trace = String(item['Trace ID'] || '').trim();
-  					return !trace.includes('*');
-				});
-					doc2 = doc2.filter(item => {
-    				const trace = String(item['Trace ID'] || '').trim();
-    				return !trace.includes('*');
-				});  
+                // ===== TAMBAHAN FILTER TRACE ID UNTUK KEDUA FILE =====
+                doc1 = doc1.filter(item => {
+                    const trace = String(item['Trace ID'] || '').trim();
+                    return !trace.includes('*');
+                });
+                doc2 = doc2.filter(item => {
+                    const trace = String(item['Trace ID'] || '').trim();
+                    return !trace.includes('*');
+                });  
 
                 // **Filter Transaction Type = "Picking&Packing" pada doc2**
                 doc2 = doc2.filter(row => String(row['Transaction Type'] || '').trim() === 'Picking&Packing');
@@ -826,9 +817,10 @@
             return `<th${className} style="width: ${width}px;">${colName}</th>`;
         }).join('');
 
-		// Gunakan base64 yang sudah dimuat dari file
-		const lincgrpLogo = lincgrpLogoBase64;
-		const linclogLogo = linclogLogoBase64;
+        // Menggunakan base64 yang sudah dimuat dari file
+        const lincgrpLogo = lincgrpLogoBase64;
+        const linclogLogo = linclogLogoBase64;
+
         let allPagesHtml = '';
 
         for (let page = 0; page < totalPages; page++) {
@@ -864,7 +856,8 @@
                 </div>
                 <div style="flex: 1; text-align: center;">
                     <h1 style="font-size: 24px; font-weight: 800; color: #1e3a8a; margin: 0;">CYCLE COUNT SHEET</h1>
-                    <p style="margin: 2px 0; font-size: 15px;">Customer: ${currentCustomer} | Tanggal: ${formatDateIndonesian(new Date())}</p>                </div>
+                    <p style="margin: 2px 0; font-size: 15px;">Customer: ${currentCustomer} | Tanggal: ${formatDateIndonesian(new Date())}</p>
+                </div>
                 <img src="${linclogLogo}" alt="Linclog" style="height: 80px; width: auto; flex-shrink: 0;">
             </div>
             <table class="print-table">
@@ -872,7 +865,8 @@
                 <tbody>${bodyRows}</tbody>
             </table>
             <div class="print-footer">
-                <p>Dicetak pada: ${formatDateIndonesian(new Date())} ${new Date().toLocaleTimeString('id-ID')} | Halaman ${String(page+1).padStart(2,'0')} of ${String(totalPages).padStart(2,'0')}</p>                <p style="margin-top:4px;">Catatan: Isi kolom Qty Actual dan Remark sesuai hasil count manual.</p>
+                <p>Dicetak pada: ${formatDateIndonesian(new Date())} ${new Date().toLocaleTimeString('id-ID')} | Halaman ${String(page+1).padStart(2,'0')} of ${String(totalPages).padStart(2,'0')}</p>
+                <p style="margin-top:4px;">Catatan: Isi kolom Qty Actual dan Remark sesuai hasil count manual.</p>
                 <p>PT CIPTA MAPAN LOGISTICS - SITE JABABEKA</p>
             </div>
             `;
@@ -909,7 +903,8 @@
                 </div>
                 <div style="flex: 1; text-align: center;">
                     <h1 style="font-size: 24px; font-weight: 800; color: #1e3a8a; margin: 0;">COUNTSHEET TEMUAN</h1>
-                    <p style="margin: 2px 0; font-size: 15px;">Customer: ${currentCustomer} | Tanggal: ${formatDateIndonesian(new Date())}</p>        </div>
+                    <p style="margin: 2px 0; font-size: 15px;">Customer: ${currentCustomer} | Tanggal: ${formatDateIndonesian(new Date())}</p>
+                </div>
                 <img src="${linclogLogo}" alt="Linclog" style="height: 80px; width: auto; flex-shrink: 0;">
             </div>
             <table class="print-table">
@@ -930,6 +925,31 @@
         document.getElementById('printContainer').innerHTML = allPagesHtml;
         window.print();
     }
+
+    // ==================== FUNGSI UNTUK MEMUAT LOGO DARI FILE TXT ====================
+    async function loadLogoFromFile(fileName) {
+        try {
+            const response = await fetch(fileName);
+            if (!response.ok) throw new Error(`Gagal memuat ${fileName}`);
+            const base64 = await response.text();
+            return base64.trim(); // hapus spasi/enter yang mungkin ada
+        } catch (error) {
+            console.warn(`Logo ${fileName} tidak ditemukan, gunakan placeholder kosong.`);
+            return '';
+        }
+    }
+
+    // ==================== INISIALISASI LOGO ====================
+    (async function initLogos() {
+        lincgrpLogoBase64 = await loadLogoFromFile('lincgrp_logo.txt');
+        linclogLogoBase64 = await loadLogoFromFile('linclog_logo.txt');
+
+        // Set src navbar images
+        const lincgrpImg = document.getElementById('lincgrpLogo');
+        const linclogImg = document.getElementById('linclogLogo');
+        if (lincgrpImg && lincgrpLogoBase64) lincgrpImg.src = lincgrpLogoBase64;
+        if (linclogImg && linclogLogoBase64) linclogImg.src = linclogLogoBase64;
+    })();
 
     // ==================== EVENT LISTENERS ====================
     document.querySelectorAll('input[name="processType"]').forEach(r => r.addEventListener('change', renderUploadFields));
